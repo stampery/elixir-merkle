@@ -19,7 +19,7 @@ defmodule Merkle.Mixfile do
   end
 
   def application do
-    [applications: [:sha3]]
+    [applications: [:crypto, :sha3]]
   end
 
   defp package do
@@ -30,6 +30,6 @@ defmodule Merkle.Mixfile do
 
   defp deps do
     [{:rlist, "~> 0.0.1"},
-     {:sha3, "~> 1.0.0", compile: "make"}]
+     {:sha3, "~> 1.0.0"}]
   end
 end
