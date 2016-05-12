@@ -24,7 +24,7 @@ defmodule Merkle.Mixfile do
 
   defp package do
     [maintainers: ["Adán Sánchez de Pedro Crespo"],
-     licenses: ["AGPL"],
+     licenses: ["MIT"],
      links: %{"GitHub" => "https://github.com/stampery/elixir-merkle"}]
   end
 
