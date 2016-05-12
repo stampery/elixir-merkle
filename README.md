@@ -17,7 +17,7 @@ The mixing function is the one that gets two hashes from one floor, joins them a
 
 ```elixir
 defmodule Tree do
-  # "Merkle.Mixers.sha256" simply takes to hashes, concatenates them and calculates the SHA256 hash.
+  # "Merkle.Mixers.sha256" simply takes two hashes, concatenates them and calculates the SHA256 hash.
   use Merkle, &Merkle.Mixers.sha256/2
 end
 ```
