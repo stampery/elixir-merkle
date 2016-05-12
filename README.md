@@ -17,7 +17,7 @@ The mixing function is the one that gets two hashes from one floor, joins them a
 
 ```elixir
 defmodule Tree do
-  # "Merkle.Mixers.sha256" simply takes to hashes, concatenates them and calculates the SHA256 hash of the resulting string.
+  # "Merkle.Mixers.sha256" simply takes two hashes, concatenates them and calculates the SHA256 hash.
   use Merkle, &Merkle.Mixers.sha256/2
 end
 ```
@@ -39,6 +39,13 @@ Commutable mixers output the same result even if you reverse the order of the pa
 ```elixir
 # Result is true
 Merkle.Mixers.commutable_sha256("AA", "BB") == Merkle.Mixers.commutable_sha256("BB", "AA")
+```
+
+You can also use your own mixers:
+```elixir
+  use Merkle, fn (a, b) ->
+    :crypto.hash(:md5, a <> b)
+  end
 ```
 
 ### Creating a new tree
