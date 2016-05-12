@@ -30,9 +30,10 @@ All available mixers are:
 * `Merkle.Mixers.commutable_sha3_256`
 * `Merkle.Mixers.commutable_sha3_512`
 
-If you use a 512 bits mixer, please pass 64 as a second parameter in the `use` call:
+If you use a 512 bits mixer, you will need to call `use`like this:
 ```elixir
-  use Merkle, &Merkle.Mixers.sha3_512/2, 64
+  # 64 stands for the number of bytes in every hash
+  use Merkle, [&Merkle.Mixers.sha3_512/2, 64]
 ```
 
 Commutable mixers output the same result even if you reverse the order of the pair of hashes:
@@ -43,9 +44,9 @@ Merkle.Mixers.commutable_sha256("AA", "BB") == Merkle.Mixers.commutable_sha256("
 
 You can also use your own mixers:
 ```elixir
-  use Merkle, fn (a, b) ->
+  use Merkle, [fn (a, b) ->
     :crypto.hash(:md5, a <> b) |> Base.encode16
-  end
+  end, 16]
 ```
 
 ### Creating a new tree

@@ -1,15 +1,22 @@
 defmodule Merkle do
 
-  defmacro __using__(mixer, item_length \\ 32) do
+  defmacro __using__(params) when is_tuple(params) do
+    quote do
+      Merkle.__using__([unquote(params), 32])
+    end
+  end
+
+  defmacro __using__(params) when is_list(params) do
+    [mixer, item_size] = params
+
     quote do
       require Integer
 
       def mix(a, b) do
-        IO.inspect unquote mixer
         (unquote mixer).(a, b)
       end
 
-      @item_length unquote(item_length)
+      @item_size unquote item_size
       @empty {[[]], %{}}
       @empty_data %{}
 
@@ -33,7 +40,7 @@ defmodule Merkle do
       def push(pid, item, level \\ 0)
 
       def push(pid) do
-        item = __MODULE__.Helpers.random(@item_length)
+        item = __MODULE__.Helpers.random(@item_size)
         push(pid, item)
       end
 
@@ -122,7 +129,7 @@ defmodule Merkle do
           len = Rlist.count(floor)
           # If floor length is odd, adds a "phantom sibling"
           if Integer.is_odd(len) do
-            r = __MODULE__.Helpers.random(@item_length)
+            r = __MODULE__.Helpers.random(@item_size)
             {{:ok, {tree, proofs}}, _} = do_push({tree, proofs, nil}, r, level)
           end
           do_unorphan {tree, proofs}, level + 1
