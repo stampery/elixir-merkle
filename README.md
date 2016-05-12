@@ -41,7 +41,7 @@ Commutable mixers output the same result even if you reverse the order of the pa
 Merkle.Mixers.commutable_sha256("AA", "BB") == Merkle.Mixers.commutable_sha256("BB", "AA")
 ```
 
-You can also user your own mixers:
+You can also use your own mixers:
 ```elixir
   use Merkle, fn (a, b) ->
     :crypto.hash(:md5, a <> b)
