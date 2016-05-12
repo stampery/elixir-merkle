@@ -7,7 +7,7 @@ defmodule Merkle.Mixers do
   Good old SHA-2 with 256 bits output size.
   """
   def sha256(a, b) do
-    :crypto.hash(:sha256, a <> b)
+    :crypto.hash(:sha256, a <> b) |> Base.encode16
   end
 
   @doc """

@@ -44,7 +44,7 @@ Merkle.Mixers.commutable_sha256("AA", "BB") == Merkle.Mixers.commutable_sha256("
 You can also use your own mixers:
 ```elixir
   use Merkle, fn (a, b) ->
-    :crypto.hash(:md5, a <> b)
+    :crypto.hash(:md5, a <> b) |> Base.encode16
   end
 ```
 
