@@ -3,7 +3,7 @@ defmodule Merkle.Mixfile do
 
   def project do
     [app: :merkle,
-     version: "0.0.4",
+     version: "0.1.0",
      elixir: "~> 1.2",
      description: description,
      build_embedded: Mix.env == :prod,
@@ -30,6 +30,6 @@ defmodule Merkle.Mixfile do
 
   defp deps do
     [{:rlist, "~> 0.0.1"},
-     {:sha3, "~> 1.0.0"}]
+     {:sha3, "~> 2.0.0"}]
   end
 end

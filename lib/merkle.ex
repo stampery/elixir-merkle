@@ -85,7 +85,7 @@ defmodule Merkle do
       defp do_push({tree, proofs, data}, item, level \\ 0) do
         # If hash is already in tree, reject it
         if proofs |> Map.has_key?(item) do
-          {{:error, :duplicated}, {tree, proofs}}
+          {{:error, :duplicated}, tree, proofs}
         else
           siblings = Rlist.at(tree, level, [])
 
@@ -95,11 +95,13 @@ defmodule Merkle do
 
           # Calculate new siblings length
           len = siblings |> Rlist.count
-          if level < 1 do
-            proofs = proofs |> Map.put(item, {[], data})
+          proofs = if level < 1 do
+            proofs |> Map.put(item, {[], data})
+          else
+            proofs
           end
 
-          if len |> Integer.is_even do
+          {tree, proofs} = if len |> Integer.is_even do
             # Get previous sibling
             prev = siblings |> Rlist.at(len - 2)
             # Mix prev and curr
@@ -109,6 +111,9 @@ defmodule Merkle do
             # Push resulting parent to next level
             {{:ok, {tree, proofs}}, _} =
               do_push({tree, proofs, nil}, parent, level + 1)
+            {tree, proofs}
+          else
+            {tree, proofs}
           end
           {{:ok, {tree, proofs}}, {tree, proofs}}
         end
@@ -128,9 +133,12 @@ defmodule Merkle do
           floor = Rlist.at(tree, level)
           len = Rlist.count(floor)
           # If floor length is odd, adds a "phantom sibling"
-          if Integer.is_odd(len) do
+          {tree, proofs} = if Integer.is_odd(len) do
             r = __MODULE__.Helpers.random(@item_size)
             {{:ok, {tree, proofs}}, _} = do_push({tree, proofs, nil}, r, level)
+            {tree, proofs}
+          else
+            {tree, proofs}
           end
           do_unorphan {tree, proofs}, level + 1
         else
@@ -185,11 +193,26 @@ defmodule Merkle do
         def random(len) do
           len
             |> :crypto.strong_rand_bytes
-            |> Base.encode16
         end
       end
 
     end
+  end
+
+  def hexDecode(o) when is_binary(o) do
+    o |> Base.decode16!
+  end
+
+  def hexDecode(o) when is_list(o) do
+    o |> Enum.map(&hexDecode/1)
+  end
+
+  def hexEncode(o) when is_binary(o) do
+    o |> Base.encode16
+  end
+
+  def hexEncode(o) when is_list(o) do
+    o |> Enum.map(&hexEncode/1)
   end
 
 end

@@ -1,4 +1,4 @@
-defmodule Merkle.Mixers do
+defmodule Merkle.Mixers.Bin do
   @moduledoc """
   Different crypto Mixers for binary Merkle Trees.
   """
@@ -7,7 +7,7 @@ defmodule Merkle.Mixers do
   Good old SHA-2 with 256 bits output size.
   """
   def sha256(a, b) do
-    :crypto.hash(:sha256, a <> b) |> Base.encode16
+    :crypto.hash(:sha256, a <> b)
   end
 
   @doc """
@@ -22,7 +22,8 @@ defmodule Merkle.Mixers do
   SHA-3 (Keccak)
   """
   def sha3(a, b, size \\ 256) do
-    :sha3.hexhash(size, a <> b)
+    {:ok, hash} = :sha3.hash(size, a <> b)
+    hash
   end
 
   @doc """
@@ -50,7 +51,7 @@ defmodule Merkle.Mixers do
 
   # This helper commutes two hashes so "a" is the biggest and "b" the smallest
   defp commute({a, b}) do
-    if :binary.decode_unsigned(a) > :binary.decode_unsigned(b) do
+    if a < b do
       {a, b}
     else
       {b, a}
