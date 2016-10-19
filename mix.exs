@@ -29,7 +29,8 @@ defmodule Merkle.Mixfile do
   end
 
   defp deps do
-    [{:rlist, "~> 0.0.1"},
+    [{:ex_doc, ">= 0.0.0", only: :dev},
+     {:rlist, "~> 0.0.2"},
      {:sha3, "~> 2.0.0"}]
   end
 end
