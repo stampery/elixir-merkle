@@ -1,4 +1,4 @@
-# Merkle [![hex.pm version](https://img.shields.io/hexpm/v/plug.svg?style=flat)](https://hex.pm/packages/merkle)
+# Merkle [![hex.pm version](https://img.shields.io/hexpm/v/merkle.svg?style=flat)](https://hex.pm/packages/merkle)
 
 Implementation of binary [Merkle Tree](https://en.wikipedia.org/wiki/Merkle_tree) in Elixir.
 
