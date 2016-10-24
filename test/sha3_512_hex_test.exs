@@ -2,7 +2,7 @@ defmodule MerkleSHA3_512HexTest do
   use ExUnit.Case
 
   defmodule Tree do
-    use Merkle, [&Merkle.Mixers.Hex.sha3_512/2, 64]
+    use Merkle, {&Merkle.Mixers.Hex.sha3_512/2, 64}
   end
 
   @foo "4BCA2B137EDC580FE50A88983EF860EBACA36C857B1F492839D6D7392452A63C82CBEBC68E3B70A2A1480B4BB5D437A7CBA6ECF9D89F9FF3CCD14CD6146EA7E7"

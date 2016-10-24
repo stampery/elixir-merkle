@@ -7,7 +7,7 @@ Implementation of [Merkle Trees](https://en.wikipedia.org/wiki/Merkle_tree) in E
   1. Add merkle to your list of dependencies in `mix.exs`:
 
         def deps do
-          [{:merkle, "~> 0.1.0"}]
+          [{:merkle, "~> 0.2.0"}]
         end
 
 ## Usage
@@ -17,7 +17,8 @@ The mixing function is the one that gets two consecutive hashes from one level i
 
 ```elixir
 defmodule Tree do
-  # "Merkle.Mixers.Bin.sha256" simply takes two hashes, concatenates them and calculates the SHA256 hash.
+  # "Merkle.Mixers.Bin.sha256" simply takes two hashes, concatenates them and
+  # calculates the SHA256 hash.
   use Merkle, &Merkle.Mixers.Bin.sha256/2
 end
 ```
@@ -41,7 +42,7 @@ All available mixers are:
 If you use a 512 bits mixer, you will need to call `use`like this:
 ```elixir
   # 64 stands for the number of bytes in every hash
-  use Merkle, [&Merkle.Mixers.Bin.sha3_512/2, 64]
+  use Merkle, {&Merkle.Mixers.Bin.sha3_512/2, 64}
 ```
 
 Commutable mixers output the same result even if you reverse the order of the pair of hashes:
@@ -52,9 +53,9 @@ Merkle.Mixers.Bin.commutable_sha256("AA", "BB") == Merkle.Mixers.commutable_sha2
 
 You can also define your own mixers:
 ```elixir
-  use Merkle, [fn (a, b) ->
+  use Merkle, {fn (a, b) ->
     :crypto.hash(:md5, a <> b)
-  end, 16]
+  end, 16}
 ```
 
 ### Creating a new tree

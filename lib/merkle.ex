@@ -1,18 +1,35 @@
 defmodule Merkle do
 
-  defmacro __using__(params) when is_tuple(params) do
-    quote do
-      Merkle.__using__([unquote(params), 32])
-    end
-  end
+  @moduledoc """
+  `Merkle` module provides a macro implementing [Merkle Trees](https://en.wikipedia.org/wiki/Merkle_tree) in Elixir.
+  """
 
-  defmacro __using__(params) when is_list(params) do
-    [mixer, item_size] = params
+  @typedoc """
+  A cryptographic hash.
+  """
+  @type hash :: String.t
 
+  @typedoc """
+  The hexadecimal representation of a cryptographic hash.
+  """
+  @type digest :: String.t
+
+  @doc """
+  This macro implements methods for handling Merkle Trees.
+
+  ## Examples
+
+      iex> defmodule Tree do
+      ...>   use Merkle, &Merkle.Mixers.Bin.sha256/2
+      ...> end
+      {:module, Tree, <<...>>, {:module, Tree.Helpers, <<...>>, {:random, 1}}}
+  """
+  @spec __using__({Function.t, Integer.t}) :: Module.t
+  defmacro __using__({mixer, item_size}) do
     quote do
       require Integer
 
-      def mix(a, b) do
+      defp mix(a, b) do
         (unquote mixer).(a, b)
       end
 
@@ -199,18 +216,45 @@ defmodule Merkle do
     end
   end
 
+  @spec __using__(Function.t) :: Module.t
+  defmacro __using__(params) do
+    quote do
+      Merkle.__using__({unquote(params), 32})
+    end
+  end
+
+  @doc """
+  Decodes hexadecimal string (digest) into binary string (hash).
+
+  ## Examples
+
+      iex> Merkle.hexDecode("FABADA")
+      <<255, 186, 218>>
+  """
+  @spec hexDecode(digest) :: hash
   def hexDecode(o) when is_binary(o) do
     o |> Base.decode16!
   end
 
+  @spec hexDecode([digest]) :: [hash]
   def hexDecode(o) when is_list(o) do
     o |> Enum.map(&hexDecode/1)
   end
 
+  @doc """
+  Encodes binary string (hash) into hexadecimal string (digest).
+
+  ## Examples
+
+      iex> Merkle.hexEncode(<<255, 186, 218>>)
+      "FABADA"
+  """
+  @spec hexEncode(hash) :: digest
   def hexEncode(o) when is_binary(o) do
     o |> Base.encode16
   end
 
+  @spec hexEncode([hash]) :: [digest]
   def hexEncode(o) when is_list(o) do
     o |> Enum.map(&hexEncode/1)
   end

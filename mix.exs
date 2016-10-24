@@ -1,20 +1,23 @@
 defmodule Merkle.Mixfile do
   use Mix.Project
 
+  @version "0.2.0"
+
   def project do
     [app: :merkle,
-     version: "0.1.0",
+     version: @version,
      elixir: "~> 1.2",
      description: description,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps,
+     docs: [source_ref: "v#{@version}", main: "readme", extras: ["README.md"]],
      package: package]
   end
 
   defp description do
     """
-    Implementation of binary Merkle Tree in Elixir.
+    Implementation of Merkle Trees in Elixir.
     """
   end
 
