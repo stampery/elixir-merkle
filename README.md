@@ -1,51 +1,59 @@
 # Merkle [![hex.pm version](https://img.shields.io/hexpm/v/merkle.svg?style=flat)](https://hex.pm/packages/merkle)
 
-Implementation of binary [Merkle Tree](https://en.wikipedia.org/wiki/Merkle_tree) in Elixir.
+Implementation of [Merkle Trees](https://en.wikipedia.org/wiki/Merkle_tree) in Elixir.
 
 ## Installation
 
   1. Add merkle to your list of dependencies in `mix.exs`:
 
         def deps do
-          [{:merkle, "~> 0.0.1"}]
+          [{:merkle, "~> 0.1.0"}]
         end
 
 ## Usage
 
 ### Choosing the mixing function
-The mixing function is the one that gets two hashes from one floor, joins them and output the result for pushing it to the next level in the tree.
+The mixing function is the one that gets two consecutive hashes from one level in the tree, joins them and output the result for pushing it to the next level.
 
 ```elixir
 defmodule Tree do
-  # "Merkle.Mixers.sha256" simply takes two hashes, concatenates them and calculates the SHA256 hash.
-  use Merkle, &Merkle.Mixers.sha256/2
+  # "Merkle.Mixers.Bin.sha256" simply takes two hashes, concatenates them and calculates the SHA256 hash.
+  use Merkle, &Merkle.Mixers.Bin.sha256/2
 end
 ```
 
+This library provides both binary and hexadecimal modes of each hash function. Binary mode process the hashes as binary strings (`<<255, 186, 218>>`) while hexadecimal mode process them as Base16 strings (`"FABADA"`).
+
 All available mixers are:
-* `Merkle.Mixers.sha256`
-* `Merkle.Mixers.commutable_sha256`
-* `Merkle.Mixers.sha3_256`
-* `Merkle.Mixers.sha3_512`
-* `Merkle.Mixers.commutable_sha3_256`
-* `Merkle.Mixers.commutable_sha3_512`
+* `Merkle.Mixers.Bin.sha256`
+* `Merkle.Mixers.Bin.commutable_sha256`
+* `Merkle.Mixers.Bin.sha3_256`
+* `Merkle.Mixers.Bin.sha3_512`
+* `Merkle.Mixers.Bin.commutable_sha3_256`
+* `Merkle.Mixers.Bin.commutable_sha3_512`
+* `Merkle.Mixers.Hex.sha256`
+* `Merkle.Mixers.Hex.commutable_sha256`
+* `Merkle.Mixers.Hex.sha3_256`
+* `Merkle.Mixers.Hex.sha3_512`
+* `Merkle.Mixers.Hex.commutable_sha3_256`
+* `Merkle.Mixers.Hex.commutable_sha3_512`
 
 If you use a 512 bits mixer, you will need to call `use`like this:
 ```elixir
   # 64 stands for the number of bytes in every hash
-  use Merkle, [&Merkle.Mixers.sha3_512/2, 64]
+  use Merkle, [&Merkle.Mixers.Bin.sha3_512/2, 64]
 ```
 
 Commutable mixers output the same result even if you reverse the order of the pair of hashes:
 ```elixir
 # Result is true
-Merkle.Mixers.commutable_sha256("AA", "BB") == Merkle.Mixers.commutable_sha256("BB", "AA")
+Merkle.Mixers.Bin.commutable_sha256("AA", "BB") == Merkle.Mixers.commutable_sha256("BB", "AA")
 ```
 
-You can also use your own mixers:
+You can also define your own mixers:
 ```elixir
   use Merkle, [fn (a, b) ->
-    :crypto.hash(:md5, a <> b) |> Base.encode16
+    :crypto.hash(:md5, a <> b)
   end, 16]
 ```
 
@@ -60,8 +68,8 @@ pid = Tree.new!
 
 ### Pushing elements to a tree
 ```elixir
-pid |> Tree.push "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
-pid |> Tree.push "38B060A751AC96384CD9327EB1B1E36A21FDB71114BE07434C0CC7BF63F6E1DA"
+pid |> Tree.push("E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855")
+pid |> Tree.push("38B060A751AC96384CD9327EB1B1E36A21FDB71114BE07434C0CC7BF63F6E1DA")
 ```
 `Tree.push/1` returns `:ok` upon success or `{:error, error_name}` if something goes wrong.
 
