@@ -269,5 +269,16 @@ defmodule MerkleSHA3_512HexTest do
       do: proof
   end
 
+  test "proving" do
+    pid = sized_tree 64
+    hash = @hashes |> Enum.at(26)
+    root = Tree.close pid
+    {proof, index} = with {tree, proofs} <- Tree.get(pid),
+                          {proof, _}  <- Map.get(proofs, hash),
+                          floor <- Rlist.at(tree, 0),
+                          index <- Enum.count(floor) - Enum.find_index(floor, &(&1==hash)) - 1,
+                     do: {proof, index}
+    assert :ok == Tree.prove(hash, index, Enum.reverse(proof), root)
+  end
 
 end

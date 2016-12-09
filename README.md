@@ -101,13 +101,15 @@ Once you have finished adding hashes to your Merkle Tree and closed it by using 
 hash = "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
 root = pid |> Tree.close
 
-{_merkle_tree, merkle_proofs} = pid |> Tree.get
+{merkle_tree, merkle_proofs} = pid |> Tree.get
 {proof, _metadata} = merkle_proofs |> Map.get(hash)
+first_floor = merkle_tree |> Enum.at(-1)
+merkle_index = Enum.count(first_floor) - Enum.find_index(floor, &(&1==hash)) - 1
 ```
 
 ### Verifying that a Merkle Proof is valid
 In order to verify that a Merkle Proof is valid and therefore prove that the hash was in the tree, you just need the hash, the proof itself and the Merkle Root.
 ```elixir
 # Result will be :ok or :error
-result = hash |> Tree.prove(proof, root)
+result = hash |> Tree.prove(Enum.reverse(proof), merkle_index, root)
 ```

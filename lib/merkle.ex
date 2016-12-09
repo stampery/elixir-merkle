@@ -89,11 +89,16 @@ defmodule Merkle do
         Agent.update(pid, fn _tree -> @empty end)
       end
 
-      def prove(hash, siblings, root) do
-        if siblings |> Enum.count > 0 do
+      def prove(hash, index, siblings, root, level \\ 0) do
+        if Enum.count(siblings) > 0 do
           [head | tail] = siblings
-          hash = mix(hash, head)
-          prove(hash, tail, root)
+          side = index |> div(round(Float.ceil(:math.pow(2, level)))) |> rem(2)
+          hash = if side == 0 do
+            mix(hash, head)
+          else
+            mix(head, hash)
+          end
+          prove(hash, index, tail, root, level+1)
         else
           hash == root && :ok || :error
         end
@@ -102,7 +107,7 @@ defmodule Merkle do
       defp do_push({tree, proofs, data}, item, level \\ 0) do
         # If hash is already in tree, reject it
         if proofs |> Map.has_key?(item) do
-          {{:error, :duplicated}, tree, proofs}
+          {{:error, :duplicated}, {tree, proofs}}
         else
           siblings = Rlist.at(tree, level, [])
 
